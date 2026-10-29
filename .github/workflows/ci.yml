@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-demo:
+    name: Resolve package from GitHub + build for iOS Simulator
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve the remote TrustRemediation package (pinned to 1.x)
+        run: xcodebuild -resolvePackageDependencies -project Demo.xcodeproj -scheme Demo
+      - name: Build the Demo app (compile-only, no device needed)
+        run: |
+          xcodebuild build \
+            -project Demo.xcodeproj \
+            -scheme Demo \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
